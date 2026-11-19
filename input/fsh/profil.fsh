@@ -39,26 +39,49 @@ Title: "DG Arzneimittelallergie"
 Description: "Arzneimittelallergie, wie sie in der Hausarztpraxis erfasst und auf der Notfallstation gelesen wird."
 
 // Anforderung 1: nur Allergien gegen Arzneimittel
-// * category TODO_Regel
+// Das Profil gilt immer nur für Arzneimittel. Darum genau eine Kategorie,
+// und die ist fix "medication".
+* category 1..1 MS
+* category = #medication
 
 // Anforderung 2: klinischer Status
-// * clinicalStatus TODO_Regel
+// "muss immer angegeben sein" -> Pflichtfeld (1..1) und Must Support.
+* clinicalStatus 1..1 MS
 
 // Anforderung 3: Codes aus der Schweizer Allergieliste ($ch-allergy-vs)
-// * code TODO_Regel
+// Ein Code ist Pflicht. Binding "extensible": Gibt es einen passenden Code
+// in der Liste, muss dieser verwendet werden. Fehlt einer, darf ein anderer
+// Code oder nur Text (code.text) erfasst werden. CH Core hat "preferred",
+// extensible ist strenger und damit erlaubt.
+* code 1..1 MS
+* code from $ch-allergy-vs (extensible)
 
 // Anforderung 4: Kritikalität (wie gefährlich die Allergie ist)
-// * criticality TODO_Regel
+// Pflicht und Must Support. Ist die Gefahr unbekannt, gibt es den Code
+// #unable-to-assess, darum ist 1..1 immer erfüllbar.
+* criticality 1..1 MS
 
 // Anforderung 5: Beginn der Allergie
-// * onset[x] TODO_Regel
+// Entweder ein Datum (dateTime) oder ein ungefähres Alter (Age).
+// Period, Range und string sind nicht erlaubt.
+* onset[x] MS
+* onset[x] only dateTime or Age
 
 // Anforderung 6: wer die Allergie erfasst hat
-// * recorder TODO_Regel
+// Pflicht, und nur eine Ärztin oder ein Arzt (als Person oder in der
+// Rolle in einer Praxis). Patient und RelatedPerson aus CH Core sind
+// damit ausgeschlossen.
+* recorder 1..1 MS
+* recorder only Reference(CHCorePractitioner or CHCorePractitionerRole)
 
 // Anforderung 7: Reaktionen (die Symptome einer Reaktion stehen in reaction.manifestation)
-// * reaction TODO_Regel
-// * reaction.manifestation TODO_Regel   (nur falls ihr dafür eine Regel braucht)
+// Nicht Pflicht (0..*), aber Systeme müssen Reaktionen verarbeiten können.
+// Symptome kommen aus der Schweizer Liste, andere Codes sind erlaubt,
+// wenn kein passender existiert (extensible, strenger als CH Core).
+* reaction MS
+* reaction.manifestation MS
+* reaction.manifestation from $ch-allergy-manifestation-vs (extensible)
 
-// Invariante (steht schon in invarianten.fsh), nur die // entfernen:
-// * obeys dg-allergy-1
+// Invariante (steht schon in invarianten.fsh):
+// Eine bestätigte Allergie muss mindestens eine Reaktion dokumentieren.
+* obeys dg-allergy-1
