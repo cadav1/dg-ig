@@ -30,6 +30,6 @@ Dieses IG baut auf [CH Core 6.0.0](https://fhir.ch/ig/ch-core/6.0.0/) auf.
 
 ### Autorin oder Autor
 
-VORNAME NACHNAME
+David Cajka
 
 <p style="font-size:smaller">Erstellt im Lab des Moduls Data Standards in Healthcare, ZHAW, HS26. Kein offizieller Standard.</p>
